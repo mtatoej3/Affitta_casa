@@ -1,0 +1,5 @@
+DISPONIBILITA
+    La sovrapposizione non è un errore di struttura, È un errore di logica di business, Il DB non può prevenirla da solo senza 
+    vincoli specifici, Se il backend controlla sempre → il rischio è gestito
+
+

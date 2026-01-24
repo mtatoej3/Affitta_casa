@@ -1,0 +1,4 @@
+affitta_casa\db\dbManager.class
+affitta_casa\dao\UtenteDAO.class
+affitta_casa\App.class
+affitta_casa\models\Utente.class

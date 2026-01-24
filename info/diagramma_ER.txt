@@ -1,0 +1,66 @@
+MODELLO ER 
+
+1. Entità: Utente
+ Rappresenta tutti gli attori del sistema (Guest, Host, Super-host).
+
+ -id: INT (PK)
+ -nome: VARCHAR
+ -cognome: VARCHAR
+ -email: VARCHAR (Unique)
+ -indirizzo: VARCHAR
+ -ruolo: ENUM(GUEST, HOST, SUPER_HOST)
+ -codice_host: VARCHAR (Nullable - Se valorizzato, l'utente può caricare abitazioni)
+ -is_superhost: BOOLEAN (Default: False - Gestito tramite logica di business o trigger dopo 100 prenotazioni)
+
+2. Entità: Abitazione 
+ Dati fisici e strutturali dell'immobile.
+ 
+ -id: INT (PK)
+ -id_host: INT (FK -> Utente.id)
+ -nome: VARCHAR
+ -indirizzo: VARCHAR
+ -n_locali: INT
+ -n_posti_letto: INT
+ -piano: INT
+
+
+
+3. Entità: Disponibilita
+ Gestisce i periodi in cui l'host mette effettivamente la casa sul mercato.
+ 
+ -id: INT (PK)
+ -id_abitazione: INT (FK -> Abitazione.id)
+ -data_inizio: DATE
+ -data_fine: DATE
+ -prezzo_periodo: DECIMAL 
+
+4. Entità: Prenotazione
+ L'atto del soggiorno. Include la tua nuova aggiunta per la gestione dei conflitti.
+ 
+ -id: INT (PK)
+ -id_abitazione: INT (FK -> Abitazione.id)
+ -id_guest: INT (FK -> Utente.id)
+ -data_inizio: DATE (Inizio soggiorno)
+ -data_fine: DATE (Fine soggiorno)
+ -data_creazione_record: TIMESTAMP (La tua aggiunta: serve per gestire la priorità di chi prenota prima e le politiche di cancellazione)
+ -stato: ENUM ('confermata', 'cancellata', 'in_attesa')
+
+5. Entità: Feedback
+ Valutazione post-soggiorno.
+ 
+ -id: INT (PK)
+ -id_prenotazione: INT (FK -> Prenotazione.id)
+ -titolo: VARCHAR
+ -testo: TEXT
+ -punteggio: INT (Range 1-5)
+
+Relazioni (Cardinalità)
+Utente (Host) — Abitazione (1:N): Un host può gestire molte case, ogni casa appartiene a un solo host.
+
+Abitazione — Disponibilita (1:N): Una casa può essere disponibile in più intervalli di tempo non consecutivi.
+
+Abitazione — Prenotazione (1:N): Una casa può ricevere molte prenotazioni (ma mai sovrapposte temporalmente).
+
+Utente (Guest) — Prenotazione (1:N): Un utente può effettuare molti viaggi/prenotazioni.
+
+Prenotazione — Feedback (1:1): Ogni feedback è legato univocamente a una prenotazione avvenuta (garantisce che solo chi ha soggiornato possa recensire).

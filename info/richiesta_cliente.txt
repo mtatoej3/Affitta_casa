@@ -1,0 +1,84 @@
+# Turista Facoltoso - Progetto Finale
+
+## Scenario
+    Un facoltoso turista americano ci ha chiesto di creare una piattaforma ispirata ad un famoso sito per affittare case vacanza.
+
+**Voi siete l'operatore di backoffice**: 
+ non dovete implementare autenticazione, login, registrazione o gestione ruoli.
+ Il vostro compito è sviluppare il sistema che un operatore utilizza per registrare e 
+ gestire i dati che gli vengono passati (utenti, host, abitazioni, prenotazioni, feedback).
+
+## Entità del sistema
+
+    **Abitazione**: id, nome, indirizzo, numero di locali, numero di posti letto, piano, prezzo, periodo di disponibilità (data inizio e data fine).
+    **Utente**: id, nome, cognome, email, indirizzo.
+    **Host**: è un utente con in più un codice host. Può caricare una o più abitazioni.
+    **Super-host**: un host che ha ricevuto almeno 100 prenotazioni da quando si è registrato.
+    **Prenotazione**: id univoco, data inizio, data fine, abitazione relativa, utente che ha soggiornato.
+    **Feedback**: id, titolo, testo, punteggio (da 1 a 5). Può essere lasciato da un utente che ha soggiornato presso un'abitazione, riferito al proprietario.
+
+## Operazioni richieste
+    Il sistema deve permettere di:
+    - Ottenere le abitazioni corrispondenti ad un certo codice host
+    - Ottenere l'ultima prenotazione dato un id utente
+    - Ottenere l'abitazione più gettonata nell'ultimo mese
+    - Ottenere gli host con più prenotazioni nell'ultimo mese
+    - Ottenere tutti i super-host
+    - Ottenere i 5 utenti con più giorni prenotati nell'ultimo mese
+    - Ottenere il numero medio di posti letto calcolato in base a tutte le abitazioni caricate dagli host
+
+---
+
+## Requisiti tecnici
+
+    ### Backend Java
+        Il codice deve rispettare tutte le **best practices** e i **moduli** visti fino ad ora nel corso:
+        - Corretta organizzazione in package (model, dao, controller, view, ecc.)
+        - Utilizzo di **Collections** (`List`, `Map`, `Set`) per la gestione dei dati
+        - Gestione delle **eccezioni** con classi personalizzate dove serve
+        - Aggiunta di **logging** per le operazioni principali
+
+    ### Frontend React
+        Il frontend deve essere sviluppato utilizzando **React** e deve rispettare le seguenti best practices:
+        - **Architettura component-based**: organizzazione del codice in componenti riutilizzabili e modulari
+        - **Gestione dello stato**: utilizzo appropriato di `useState`, `useEffect` e, se necessario, Context API
+        - **Routing**: implementazione di routing client-side con React Router per la navigazione tra le diverse sezioni dell'applicazione
+        - **Chiamate API**: gestione delle chiamate HTTP al backend con gestione corretta di loading, errori e successi
+        - **Form handling**: implementazione di form con validazione lato client per tutte le operazioni CRUD
+        - **UI/UX**: interfaccia utente moderna, intuitiva e responsive (adattabile a diverse dimensioni di schermo)
+        - **Gestione errori**: visualizzazione chiara dei messaggi di errore all'utente
+
+---
+
+## Persistenza
+Il progetto deve prevedere la persistenza dei dati su database:
+    - **Modello ER**: deve essere ben progettato e coerente con l'implementazione
+    - **DDL**: script di creazione del database da includere nella repository
+    - **DML**: script con dati di esempio da includere nella repository
+
+---
+
+## Consegna
+
+    **Modalità**: consegna tramite repository GitHub
+    **Scadenza**: **05/02 ore 23:59:59** (fa fede l'ultimo commit)
+
+    Il repository può essere reso pubblico anche all'ultimo momento, l'importante è che sia visibile il giorno dell'esame.
+
+---
+
+## Valutazione
+
+    La valutazione avverrà tramite **presentazione in aula** seguita da **1-2 domande sul codice scritto**. Le domande potranno riguardare sia il **Backend** che il **Frontend**. La valutazione finale è a discrezione del docente.
+
+**Criteri di valutazione**:
+    - Qualità del codice
+    - Rispetto dei pattern e delle architetture viste a lezione
+    - Persistenza coerente con i principi di progettazione studiati
+    - Consegna entro i termini
+    - Progetto funzionante (Backend e Frontend)
+    - Documentazione corretta e completa
+    - Chiarezza nella presentazione
+    - Capacità di rispondere alle domande sul proprio codice
+    - Ragionamento logico nell'implementazione della soluzione
+    - Cronologia dei commit Git (per valutare il processo di sviluppo)
