@@ -1,0 +1,20 @@
+finsico di fare tutti i dao 
+
+poi creo i metodi parametrici per l utilizzo effettivo del dao 
+
+verificare se è sufficente per i controlli e la b2b 
+
+    se basta va bene cosi 
+
+    se no fare i controlli b2b 
+
+
+e poi pensare al fe 
+
+
+
+
+
+
+///////#### ATTENZIONE METTERE private int id a tutti i model ma al dao serve o no ? 
+

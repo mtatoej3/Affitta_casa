@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.sql.Statement;
 
 import affitta_casa.db.dbManager;
 import affitta_casa.models.Utente;
@@ -18,8 +19,9 @@ public class UtenteDAO {
     public void inserisciUtente(Utente utente) {
         String sql = "INSERT INTO Utente (nome, cognome, email, indirizzo, ruolo, codice_host, is_superhost) VALUES (?, ?, ?, ?, ?::ruolo_utente, ?, ?)";
 
+        // MODIFICA 1: Aggiunto Statement.RETURN_GENERATED_KEYS
         try (Connection conn = dbManager.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, utente.getNome());
             pstmt.setString(2, utente.getCognome());
@@ -30,7 +32,15 @@ public class UtenteDAO {
             pstmt.setBoolean(7, false);
 
             pstmt.executeUpdate();
-            System.out.println("Utente salvato con successo!");
+
+            // MODIFICA 2: Recupero dell'ID generato dal SERIAL
+            try (ResultSet rs = pstmt.getGeneratedKeys()) {
+                if (rs.next()) {
+                    utente.setId(rs.getInt(1)); // Ora l'oggetto utente ha l'ID corretto (es. 2)
+                }
+            }
+
+            System.out.println("Utente salvato con successo! ID assegnato: " + utente.getId());
 
         } catch (SQLException e) {
             System.err.println("Errore nel salvataggio: " + e.getMessage());

@@ -1,4 +1,16 @@
 C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\App.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\controller\api\UtenteAPI.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\controller\dto\RicercaAbitazioneDTO.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\dao\AbitazioneDAO.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\dao\DisponibilitaDAO.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\dao\PrenotazioneDAO.java
 C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\dao\UtenteDAO.java
 C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\db\dbManager.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\models\Abitazione.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\models\Disponibilita.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\models\Prenotazione.java
 C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\models\Utente.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\service\UtenteService.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\test\testAbi.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\test\testDisp.java
+C:\Users\CHIARA\Desktop\infobasic\IB2\java\Affitta_casa\demo_affitta_casa\src\main\java\affitta_casa\test\testPreno.java

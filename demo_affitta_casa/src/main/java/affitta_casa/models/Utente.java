@@ -2,6 +2,7 @@ package affitta_casa.models;
 
 public class Utente {
     
+    private int id;
     private String nome;
     private String cognome;
     private String email;
@@ -10,10 +11,13 @@ public class Utente {
     private String codice_host;
     private boolean is_superhost;
     
-    
+    public Utente() {
+    }
 
     public Utente(String nome, String cognome, String email, String indirizzo, affitta_casa.models.Utente.ruolo ruolo,
             String codice_host, boolean is_superhost) {
+        
+
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
@@ -33,6 +37,7 @@ public class Utente {
     }
 
 
+    
 
     public String getNome() {
         return nome;
@@ -114,6 +119,18 @@ public class Utente {
 
     public void setIs_superhost(boolean is_superhost) {
         this.is_superhost = is_superhost;
+    }
+
+
+
+    public int getId() {
+        return id;
+    }
+
+
+
+    public void setId(int id) {
+        this.id = id;
     }
 
 
