@@ -6,7 +6,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import affitta_casa.db.dbManager;
 import affitta_casa.models.Abitazione;
@@ -76,6 +78,32 @@ public class DisponibilitaDAO {
             System.err.println("Errore nella ricerca disponibilità: " + e.getMessage());
         }
         return risultati;
+    }
+
+    public List<Map<String, Object>> getDisponibilitaAbitazione(int idAbitazione) {
+        List<Map<String, Object>> lista = new ArrayList<>();
+        String sql = "SELECT * FROM Disponibilita WHERE id_abitazione = ? ORDER BY data_inizio ASC";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idAbitazione);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> riga = new HashMap<>();
+                    riga.put("id", rs.getInt("id"));
+                    // Trasformiamo la data in STRINGA subito!
+                    riga.put("data_inizio", rs.getDate("data_inizio").toString());
+                    riga.put("data_fine", rs.getDate("data_fine").toString());
+                    riga.put("prezzo_periodo", rs.getDouble("prezzo_periodo"));
+                    lista.add(riga);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return lista;
     }
 
 }

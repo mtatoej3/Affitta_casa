@@ -18,3 +18,47 @@ e poi pensare al fe
 
 ///////#### ATTENZIONE METTERE private int id a tutti i model ma al dao serve o no ? 
 
+
+
+
+
+1far funzionare il filtro di ricerca per le date 
+
+2aggiustare il salvatagio id prenotazione utente 
+
+
+3finire le query funzionali 
+
+4vedere se il getsuperhots funzioni 
+
+5vedere come posso inserire 100 prenotazioni 
+
+
+6poter canncellare le prenotazioni con un bottoncino affianco 
+
+7poter accettare o cancellare le prenotazioni in attesa per quella casa 
+
+
+
+8 poter cancellare l abitazione con pup di verifica 
+
+
+
+opzionale: avere una pagina dettaglio su tutti i dati relativi ad un singolo utente 
+
+9fare tutto il feedback crearefeedbyidAbitazione, -> 
+ aggiustare il punteggio medio in alto su pagina dettaglio con una query tutta sua 
+
+ modificare feedback testo, 
+ 
+
+
+
+aggiustare il frontend 
+
+far funzionare postman 
+
+creare il readME 
+
+
+

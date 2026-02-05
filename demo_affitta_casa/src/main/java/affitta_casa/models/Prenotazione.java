@@ -3,13 +3,18 @@ package affitta_casa.models;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class Prenotazione {
     
     private int id;
-    private int id_abitazione;
+    private Abitazione id_abitazione;
     private int id_guest;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate data_inizio;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate data_fine;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime data_creazione;
     private stato stato;
 
@@ -22,9 +27,14 @@ public class Prenotazione {
         in_attesa,
     }
 
+    
+
+    public Prenotazione() {
+    }
 
 
-    public Prenotazione(int id_abitazione, int id_guest, LocalDate data_inizio, LocalDate data_fine,
+
+    public Prenotazione(Abitazione id_abitazione, int id_guest, LocalDate data_inizio, LocalDate data_fine,
             LocalDateTime data_creazione, affitta_casa.models.Prenotazione.stato stato) {
         this.id_abitazione = id_abitazione;
         this.id_guest = id_guest;
@@ -42,13 +52,13 @@ public class Prenotazione {
 
 
 
-    public int getId_abitazione() {
+    public Abitazione getId_abitazione() {
         return id_abitazione;
     }
 
 
 
-    public void setId_abitazione(int id_abitazione) {
+    public void setId_abitazione(Abitazione id_abitazione) {
         this.id_abitazione = id_abitazione;
     }
 

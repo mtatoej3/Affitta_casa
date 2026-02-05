@@ -28,8 +28,17 @@ public class Abitazione {
         return id_host;
     }
 
-    public void setId_host(Utente id_host) {
-        this.id_host = id_host;
+    // Questo serve al DAO (Metodo getTutte)
+    public void setId_host(Utente host) {
+        this.id_host = host;
+    }
+
+    // Questo serve a Jackson/React (Metodo Crea)
+    public void setId_host(String id) {
+        if (this.id_host == null) {
+            this.id_host = new Utente();
+        }
+        this.id_host.setCodice_host(id); // Assicurati che setCodice_host accetti String o usa Integer.parseInt(id)
     }
 
     public String getNome() {

@@ -7,3 +7,5 @@ export interface Utente {
     codice_host: string;
     ruolo: 'GUEST' | 'HOST' | 'SUPER_HOST';
 }
+
+

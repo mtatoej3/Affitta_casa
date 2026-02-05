@@ -10,3 +10,10 @@ dist/
 .idea/
 .vscode/
 *.swp
+
+
+node_modules/
+target/
+*.class
+.DS_Store
+dist/

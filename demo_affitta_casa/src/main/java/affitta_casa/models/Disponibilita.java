@@ -12,6 +12,13 @@ public class Disponibilita {
     private double prezzo_periodo;
     
     
+    
+
+
+    public Disponibilita() {
+    }
+
+
     public Disponibilita(Abitazione id_abitazione, LocalDate data_inizio, LocalDate data_fine, double prezzo_periodo) {
         this.id_abitazione = id_abitazione;
         this.data_inizio = data_inizio;
