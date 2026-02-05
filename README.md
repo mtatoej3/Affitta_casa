@@ -1,4 +1,4 @@
-# 🏠 Turista Facoltoso: Documentazione Integrale del Progetto
+# Turista Facoltoso: Documentazione Integrale del Progetto
 
 Benvenuti nella documentazione ufficiale di **Turista Facoltoso**, un ecosistema digitale avanzato progettato per la gestione operativa di affitti brevi. Questa documentazione analizza a fondo ogni strato tecnologico, dalla persistenza dei dati alla logica di business del backend, fino all'interfaccia utente moderna.
 
