@@ -165,7 +165,7 @@ Abbiamo adottato una filosofia di design "OLED-friendly" e professionale:
 
 ---
 
-## � Logica di Business Peculiare: Esempi di Codice
+## Logica di Business Peculiare: Esempi di Codice
 
 ### Il Filtro di Ricerca Intelligente
 La ricerca non si limita a `indirizzo` o `nomi`. Esegue una verifica di disponibilità temporale:
@@ -199,7 +199,7 @@ AND NOT EXISTS (
 
 ---
 
-## 📈 Tabella di Marcia: Evoluzione del Progetto
+## Tabella di Marcia: Evoluzione del Progetto
 1. **Fase 1**: Architettura Database e creazione tipi custom.
 2. **Fase 2**: Implementazione DAO con logica JDBC robusta.
 3. **Fase 3**: Sviluppo API RESTful con Javalin e gestione eccezioni SQL.
