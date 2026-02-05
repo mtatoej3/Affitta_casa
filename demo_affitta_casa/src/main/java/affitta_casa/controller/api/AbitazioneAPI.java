@@ -70,4 +70,18 @@ public class AbitazioneAPI {
 
     }
 
+    // ...
+    public static void elimina(Context ctx) {
+        String idString = ctx.pathParam("id");
+        try {
+            int id = Integer.parseInt(idString);
+            dao.cancellaAbitazione(id); // Metodo già esistente nel DAO
+            ctx.status(200).result("Abitazione eliminata con successo");
+        } catch (NumberFormatException e) {
+            ctx.status(400).result("ID non valido");
+        } catch (Exception e) {
+            ctx.status(500).result("Errore interno: " + e.getMessage());
+        }
+    }
+
 }

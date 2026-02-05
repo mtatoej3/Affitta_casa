@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import java.sql.Statement;
 
 import affitta_casa.db.dbManager;
@@ -151,4 +152,10 @@ public class UtenteDAO {
             System.err.println("Errore durante la cancellazione: " + e.getMessage());
         }
     }
+
+    /**
+     * Cerca prenotazioni per testo libero (nome abitazione, guest, stato)
+     */
+    
+
 }

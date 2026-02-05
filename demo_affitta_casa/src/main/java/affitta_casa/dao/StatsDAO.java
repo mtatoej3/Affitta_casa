@@ -198,4 +198,19 @@ public class StatsDAO {
     // - Ottenere il numero medio di posti letto calcolato in base a tutte le
     // abitazioni caricate dagli host
 
+    public double getMediaPostiLetto() {
+        String sql = "SELECT AVG(n_posti_letto) as media FROM abitazione";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
+
+            if (rs.next()) {
+                return rs.getDouble("media");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
 }

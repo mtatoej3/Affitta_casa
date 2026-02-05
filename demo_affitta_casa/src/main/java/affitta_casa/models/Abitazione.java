@@ -11,6 +11,9 @@ public class Abitazione {
     private int n_posti_letto;
     private int piano;
 
+    private String disponibilitaDal;
+    private String disponibilitaAl;
+
     public Abitazione(Utente id_host, String nome, String indirizzo, int n_locali, int n_posti_letto, int piano) {
         this.id_host = id_host;
         this.nome = nome;
@@ -88,5 +91,11 @@ public class Abitazione {
     public void setId(int id) {
         this.id = id;
     }
+
+    public String getDisponibilitaDal() { return disponibilitaDal; }
+    public void setDisponibilitaDal(String d) { this.disponibilitaDal = d; }
+
+    public String getDisponibilitaAl() { return disponibilitaAl; }
+    public void setDisponibilitaAl(String d) { this.disponibilitaAl = d; }
 
 }

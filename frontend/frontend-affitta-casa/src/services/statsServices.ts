@@ -41,7 +41,11 @@ export const statsService = {
         return response.json();
     },
 
-    
+    getMediaPostiLetto: async (): Promise<any> => {
+        const response = await fetch('http://localhost:7000/api/stats/media-posti-letto');
+        if (!response.ok) throw new Error("Errore nel recupero della media posti letto");
+        return response.json();
+    }
 };
 
 

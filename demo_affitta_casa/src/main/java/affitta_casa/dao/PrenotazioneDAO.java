@@ -7,7 +7,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import affitta_casa.db.dbManager;
 import affitta_casa.models.Abitazione;
@@ -161,6 +163,106 @@ public class PrenotazioneDAO {
             e.printStackTrace();
         }
         return lista;
+    }
+
+    // ... import java.util.Map; ...
+
+    public List<Map<String, Object>> getPrenotazioniPerAbitazione(int idAbitazione) {
+        List<Map<String, Object>> lista = new ArrayList<>();
+        String sql = "SELECT p.*, u.nome as guest_nome, u.cognome as guest_cognome, u.email as guest_email " +
+                "FROM Prenotazione p " +
+                "JOIN Utente u ON p.id_guest = u.id " +
+                "WHERE p.id_abitazione = ? " +
+                "ORDER BY p.data_creazione_record DESC";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setInt(1, idAbitazione);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> riga = new java.util.HashMap<>();
+                    riga.put("id", rs.getInt("id"));
+                    riga.put("data_inizio", rs.getDate("data_inizio").toString());
+                    riga.put("data_fine", rs.getDate("data_fine").toString());
+                    riga.put("stato", rs.getString("stato"));
+
+                    // Dati Guest
+                    riga.put("guest_nome", rs.getString("guest_nome"));
+                    riga.put("guest_cognome", rs.getString("guest_cognome"));
+                    riga.put("guest_email", rs.getString("guest_email"));
+
+                    lista.add(riga);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore getPrenotazioniPerAbitazione: " + e.getMessage());
+        }
+        return lista;
+    }
+
+    public boolean aggiornaStato(int idPrenotazione, String nuovoStato) {
+        String sql = "UPDATE Prenotazione SET stato = ?::stato_prenotazione WHERE id = ?";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, nuovoStato);
+            pstmt.setInt(2, idPrenotazione);
+
+            return pstmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.err.println("Errore aggiornaStato: " + e.getMessage());
+            return false;
+        }
+    }
+
+    public List<Map<String, Object>> cercaPerTestoLibero(String query) {
+        List<Map<String, Object>> risultati = new ArrayList<>();
+
+        String sql = "SELECT p.id as id_prenotazione, " +
+                "       a.nome as nome_abitazione, " +
+                "       p.data_inizio, " +
+                "       p.data_fine, " +
+                "       p.stato, " +
+                "       u.nome as guest_nome, " +
+                "       u.email as guest_email " +
+                "FROM Prenotazione p " +
+                "JOIN Abitazione a ON p.id_abitazione = a.id " +
+                "JOIN Utente u ON p.id_guest = u.id " +
+                "WHERE LOWER(a.nome) LIKE LOWER(?) " +
+                "   OR LOWER(u.nome) LIKE LOWER(?) " +
+                "   OR LOWER(u.email) LIKE LOWER(?) " +
+                "   OR LOWER(p.stato::text) LIKE LOWER(?) " +
+                "ORDER BY p.data_inizio DESC";
+
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String searchPattern = "%" + query + "%";
+            pstmt.setString(1, searchPattern);
+            pstmt.setString(2, searchPattern);
+            pstmt.setString(3, searchPattern);
+            pstmt.setString(4, searchPattern);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Map<String, Object> prenotazione = new HashMap<>();
+                    prenotazione.put("id_prenotazione", rs.getInt("id_prenotazione"));
+                    prenotazione.put("nome_abitazione", rs.getString("nome_abitazione"));
+                    prenotazione.put("data_inizio", rs.getDate("data_inizio").toString());
+                    prenotazione.put("data_fine", rs.getDate("data_fine").toString());
+                    prenotazione.put("stato", rs.getString("stato"));
+                    prenotazione.put("guest_nome", rs.getString("guest_nome"));
+                    prenotazione.put("guest_email", rs.getString("guest_email"));
+                    risultati.add(prenotazione);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Errore ricerca prenotazioni: " + e.getMessage());
+        }
+        return risultati;
     }
 
 }

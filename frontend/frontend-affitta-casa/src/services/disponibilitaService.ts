@@ -7,5 +7,10 @@ export const disponibilitaService = {
     getByAbitazione: async (idAbitazione: number | string) => {
         const response = await axios.get(`${API_URL}/${idAbitazione}`);
         return response.data;
+    },
+
+    delete: async (id: number) => {
+        const response = await axios.delete(`${API_URL}/${id}`);
+        return response.data;
     }
 };

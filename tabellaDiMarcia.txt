@@ -22,37 +22,49 @@ e poi pensare al fe
 
 
 
-1far funzionare il filtro di ricerca per le date 
+1far funzionare il filtro di ricerca per le date V
 
-2aggiustare il salvatagio id prenotazione utente 
-
-
-3finire le query funzionali 
-
-4vedere se il getsuperhots funzioni 
-
-5vedere come posso inserire 100 prenotazioni 
+2aggiustare il salvatagio id prenotazione utente controllare V
 
 
-6poter canncellare le prenotazioni con un bottoncino affianco 
+3 finire le query funzionali V
 
-7poter accettare o cancellare le prenotazioni in attesa per quella casa 
+4vedere se il getsuperhots funzioni  >
+
+5vedere come posso inserire 100 prenotazioni >
 
 
+6poter canncellare le prenotazioni con un bottoncino affianco V
 
-8 poter cancellare l abitazione con pup di verifica 
+7poter accettare o cancellare le prenotazioni in attesa per quella casa V
 
+ 
+
+8 poter cancellare l abitazione con pup di verifica tramite prima la verifica codice host, V
+   V dopo la verifa il pulsante per l eliminazione abitazione compare, ci clikko su su e il stema deve chesere se sono sicuro di cancellare l abitazione 
+
+8.5 poter modificare gli a
+-- aggiustare la query funzionale n top viagiatori, deve prendere solo i viaggiatori degli ultimi 30 giorni e non in totale 
 
 
 opzionale: avere una pagina dettaglio su tutti i dati relativi ad un singolo utente 
 
-9fare tutto il feedback crearefeedbyidAbitazione, -> 
- aggiustare il punteggio medio in alto su pagina dettaglio con una query tutta sua 
-
- modificare feedback testo, 
+9fare tutto il feedback 
+ creare feedback avere un pulsante per la creazione del feedback relativo a quell abitazione e ti esce una dialog personalizzata per gli input titolo testo punteggio da 1 a 5
+ aggiustare il punteggio medio in alto su pagina dettaglio per ogni abitazione con una query tutta sua 
+ far visualizzare i feedback in basso alla pagina dettaglio massimo 3 card per riga 
+ modificare feedback testo punteggio
+ cancellare feedback
  
 
 
+aggiungere funzionalità  CRUD utente completa sulla pagina registrazione.tsx  
+    aggiustare il posizionamento dell form 
+    aggiungere una tabella che faccia vedere tutti gli utenti con tutti i loro attributi con relativo update e delete per singolo utente 
+    aggiungere una tabella con un filtro di ricerca testuale con come query : cercare tutte le prenotazioni relativo a alla stringa digitata e mi deve far vedere id_prenotazione, nome abitazione le date stato prenotazione 
+    creami la preview completa ordinata dettagliata di tutti i codici che servono per creare questa aggiunta, non modificare il codice 
+
+-- aggiungere un footer
 
 aggiustare il frontend 
 

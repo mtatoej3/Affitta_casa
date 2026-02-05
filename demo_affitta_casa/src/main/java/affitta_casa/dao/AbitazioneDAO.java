@@ -50,19 +50,21 @@ public class AbitazioneDAO {
         List<Abitazione> risultati = new ArrayList<>();
 
         StringBuilder sql = new StringBuilder(
-                "SELECT a.*, u.nome as host_nome, u.email as host_email " +
+                "SELECT a.*, u.id as host_id, u.nome as host_nome, u.email as host_email, " +
+                        "(SELECT MIN(d.data_inizio) FROM disponibilita d WHERE d.id_abitazione = a.id) as disp_dal, " +
+                        "(SELECT MAX(d.data_fine) FROM disponibilita d WHERE d.id_abitazione = a.id) as disp_al " +
                         "FROM abitazione a " +
                         "JOIN utente u ON a.id_host = u.codice_host " +
                         "WHERE 1=1");
 
         List<Object> parametri = new ArrayList<>();
 
-        // --- FILTRI CLASSICI ---
-        if (nome != null && !nome.isEmpty()) {
+        // --- FILTRI NORMALI ---
+        if (nome != null && !nome.trim().isEmpty()) {
             sql.append(" AND a.nome ILIKE ?");
             parametri.add("%" + nome + "%");
         }
-        if (indirizzo != null && !indirizzo.isEmpty()) {
+        if (indirizzo != null && !indirizzo.trim().isEmpty()) {
             sql.append(" AND a.indirizzo ILIKE ?");
             parametri.add("%" + indirizzo + "%");
         }
@@ -75,18 +77,30 @@ public class AbitazioneDAO {
             parametri.add(nPosti);
         }
 
-        // --- FILTRO DISPONIBILITÀ DATE ---
+        // --- FILTRO DISPONIBILITÀ (UNICA RIGA) ---
         if (dataInizio != null && !dataInizio.isEmpty() && dataFine != null && !dataFine.isEmpty()) {
-            sql.append(" AND a.id NOT IN (");
-            sql.append("    SELECT p.id_abitazione FROM prenotazione p "); // Assicurati che la tabella sia
-                                                                           // 'prenotazione'
-            sql.append("    WHERE p.data_inizio < CAST(? AS DATE) AND p.data_fine > CAST(? AS DATE)");
+
+            // CORREZIONE CRITICA: Usiamo un UNICO EXISTS per garantire la continuità
+            sql.append(" AND EXISTS (");
+            sql.append("    SELECT 1 FROM disponibilita d ");
+            sql.append("    WHERE d.id_abitazione = a.id ");
+            sql.append("    AND d.data_inizio <= CAST(? AS DATE) "); // Deve iniziare prima o il giorno stesso
+            sql.append("    AND d.data_fine >= CAST(? AS DATE) "); // Deve finire dopo o il giorno stesso
             sql.append(" )");
 
-            // Logica sovrapposizione: inizio occupazione < fine desiderata AND fine
-            // occupazione > inizio desiderato
-            parametri.add(dataFine); // Per il primo ?
-            parametri.add(dataInizio); // Per il secondo ?
+            parametri.add(dataInizio);
+            parametri.add(dataFine);
+
+            // --- FILTRO PRENOTAZIONI ---
+            sql.append(" AND NOT EXISTS (");
+            sql.append("    SELECT 1 FROM prenotazione p ");
+            sql.append("    WHERE p.id_abitazione = a.id ");
+            sql.append("    AND p.data_inizio < CAST(? AS DATE) AND p.data_fine > CAST(? AS DATE) ");
+            sql.append("    AND p.stato::text = 'CONFERMATA' ");
+            sql.append(" )");
+
+            parametri.add(dataFine);
+            parametri.add(dataInizio);
         }
 
         try (Connection conn = dbManager.getConnection();
@@ -98,28 +112,24 @@ public class AbitazioneDAO {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    Utente host = new Utente(
-                            rs.getString("host_nome"),
-                            null,
-                            rs.getString("host_email"),
-                            null, null, null, false);
+                    Utente host = new Utente(rs.getString("host_nome"), null, rs.getString("host_email"), null, null,
+                            null, false);
+                    host.setId(rs.getInt("host_id"));
 
-                    Abitazione ab = new Abitazione(
-                            host,
-                            rs.getString("nome"),
-                            rs.getString("indirizzo"),
-                            rs.getInt("n_locali"),
-                            rs.getInt("n_posti_letto"),
-                            rs.getInt("piano"));
-
-                    // Imposta l'ID se lo hai nel modello, serve per il dettaglio dopo!
+                    Abitazione ab = new Abitazione(host, rs.getString("nome"), rs.getString("indirizzo"),
+                            rs.getInt("n_locali"), rs.getInt("n_posti_letto"), rs.getInt("piano"));
                     ab.setId(rs.getInt("id"));
+
+                    // Popoliamo le date per React (fondamentale!)
+                    ab.setDisponibilitaDal(dataInizio);
+                    ab.setDisponibilitaAl(dataFine);
 
                     risultati.add(ab);
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Errore nella ricerca dinamica: " + e.getMessage());
+            System.err.println("Errore SQL: " + e.getMessage());
+            e.printStackTrace();
         }
         return risultati;
     }
@@ -156,42 +166,42 @@ public class AbitazioneDAO {
     }
 
     public Abitazione getAbitazioneById(int id) {
-    String query = "SELECT a.*, u.nome as host_nome, u.email as host_email, u.codice_host " +
-                   "FROM abitazione a " +
-                   "JOIN utente u ON a.id_host = u.codice_host " +
-                   "WHERE a.id = ?";
+        String query = "SELECT a.*, u.nome as host_nome, u.email as host_email, u.codice_host " +
+                "FROM abitazione a " +
+                "JOIN utente u ON a.id_host = u.codice_host " +
+                "WHERE a.id = ?";
 
-    try (Connection conn = dbManager.getConnection();
-         PreparedStatement pstmt = conn.prepareStatement(query)) {
-        
-        pstmt.setInt(1, id);
-        
-        try (ResultSet rs = pstmt.executeQuery()) {
-            if (rs.next()) {
-                // Creiamo l'host
-                Utente host = new Utente();
-                host.setCodice_host(rs.getString("codice_host"));
-                host.setNome(rs.getString("host_nome"));
-                host.setEmail(rs.getString("host_email"));
+        try (Connection conn = dbManager.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(query)) {
 
-                // Creiamo l'abitazione
-                Abitazione ab = new Abitazione();
-                ab.setId(rs.getInt("id"));
-                ab.setNome(rs.getString("nome"));
-                ab.setIndirizzo(rs.getString("indirizzo"));
-                ab.setN_locali(rs.getInt("n_locali"));
-                ab.setN_posti_letto(rs.getInt("n_posti_letto"));
-                ab.setPiano(rs.getInt("piano"));
-                ab.setId_host(host);
-                
-                return ab;
+            pstmt.setInt(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    // Creiamo l'host
+                    Utente host = new Utente();
+                    host.setCodice_host(rs.getString("codice_host"));
+                    host.setNome(rs.getString("host_nome"));
+                    host.setEmail(rs.getString("host_email"));
+
+                    // Creiamo l'abitazione
+                    Abitazione ab = new Abitazione();
+                    ab.setId(rs.getInt("id"));
+                    ab.setNome(rs.getString("nome"));
+                    ab.setIndirizzo(rs.getString("indirizzo"));
+                    ab.setN_locali(rs.getInt("n_locali"));
+                    ab.setN_posti_letto(rs.getInt("n_posti_letto"));
+                    ab.setPiano(rs.getInt("piano"));
+                    ab.setId_host(host);
+
+                    return ab;
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
+        return null; // Se non trova nulla
     }
-    return null; // Se non trova nulla
-}
 
     public void aggiornaDatiAbitazione(int idAbitazione, String nuovoNome, int nuoviLocali, int nuoviPosti) {
         String sql = "UPDATE Abitazione SET nome = ?, n_locali = ?, n_posti_letto = ? WHERE id = ?";

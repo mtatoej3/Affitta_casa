@@ -15,6 +15,21 @@ export const utenteService = {
     getById: async (id: number) => {
         const response = await axios.get<Utente>(`${API_URL}/${id}`);
         return response.data;
+    },
+
+    getAll: async () => {
+        const response = await axios.get(`${API_URL}`);
+        return response.data;
+    },
+
+    update: async (id: number, data: Partial<Utente>) => {
+        const response = await axios.put(`${API_URL}/${id}`, data);
+        return response.data;
+    },
+
+    delete: async (id: number) => {
+        const response = await axios.delete(`${API_URL}/${id}`);
+        return response.data;
     }
 };
 

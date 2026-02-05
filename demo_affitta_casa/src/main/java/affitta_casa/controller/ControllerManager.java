@@ -16,12 +16,17 @@ public class ControllerManager {
         // --- ROTTE UTENTI ---
         app.post("/api/utenti", UtenteAPI::registra);
         app.get("/api/utenti/{id}", UtenteAPI::getProfilo);
+        app.get("/api/utenti", UtenteAPI::getAll);
+        app.put("/api/utenti/{id}", UtenteAPI::modifica);
+        app.delete("/api/utenti/{id}", UtenteAPI::cancella);
 
         // --- ROTTE ABITAZIONI ---
         // Questa serve per la ricerca con i filtri che abbiamo appena creato
         app.get("/api/abitazioni/cerca", AbitazioneAPI::cerca);
 
         app.get("/api/abitazioni/{id}", AbitazioneAPI::getDettaglioId);
+
+        app.delete("/api/abitazioni/{id}", AbitazioneAPI::elimina);
 
         // Questa serve per far creare una casa all'Host
         app.post("/api/abitazioni", AbitazioneAPI::crea);
@@ -38,7 +43,8 @@ public class ControllerManager {
         app.get("/api/stats/super-hosts", StatsAPI::getSuperHosts);
 
         app.get("/api/stats/top-guests-giorni", StatsAPI::getTopGuests);
-        
+
+        app.get("/api/stats/media-posti-letto", StatsAPI::getMediaPostiLetto);
 
         // ROTTE DISPONIBILITA //
 
@@ -47,9 +53,23 @@ public class ControllerManager {
 
         app.get("/api/disponibilita/{idAbitazione}", DisponibilitaAPI::getAbitazione);
 
-        // ROTTA PRENOTAZIONE // 
+        // Sotto le altre rotte disponibilità
+        app.delete("/api/disponibilita/{id}", DisponibilitaAPI::eliminaDisponibilita);
+
+        // ROTTA PRENOTAZIONE //
 
         app.post("/api/prenotazioni", PrenotazioneAPI::prenota);
+
+        // Sotto le altre rotte PRENOTAZIONI
+        app.get("/api/prenotazioni/abitazione/{idAbitazione}", PrenotazioneAPI::getPrenotazioniAbitazione);
+        app.put("/api/prenotazioni/{id}/stato", PrenotazioneAPI::aggiornaStatoPrenotazione);
+        app.get("/api/prenotazioni/cerca", PrenotazioneAPI::cerca);
+
+        // ROTTA FEEDBACK //
+        app.post("/api/feedback", FeedbackAPI::crea);
+        app.get("/api/feedback/abitazione/{idAbitazione}", FeedbackAPI::getByAbitazione);
+        app.get("/api/feedback/media/{idAbitazione}", FeedbackAPI::getMedia);
+        app.delete("/api/feedback/{id}", FeedbackAPI::cancella);
 
     }
 }

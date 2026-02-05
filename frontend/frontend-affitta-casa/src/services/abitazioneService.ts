@@ -49,4 +49,9 @@ export const abitazioneService = {
         return response.data;
 
     },
+
+    delete: async (id: number | string) => {
+        const response = await axios.delete(`${API_URL}/${id}`);
+        return response.data;
+    }
 };

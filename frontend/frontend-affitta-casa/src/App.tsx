@@ -5,6 +5,7 @@ import Ricerca from './pages/Ricerca';
 import CreaAbitazione from './pages/CreaAbitazione';
 import Dettaglio from './pages/Dettaglio';
 import Stats from './pages/Stast';
+import './App.css'
 // Se hai già creato Dettaglio.tsx, scommenta la riga sotto
 // import Dettaglio from './pages/Dettaglio'; 
 
@@ -14,7 +15,7 @@ function App() {
       {/* La Navbar resta fissa in alto su tutte le pagine */}
       <Navbar /> 
       
-      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      <div style={{width: '1690px', fontFamily: 'Arial, sans-serif' }}>
         <Routes>
           {/* 1. Pagina di ingresso: Registrazione/Login */}
           <Route path="/" element={<Registrazione />} />

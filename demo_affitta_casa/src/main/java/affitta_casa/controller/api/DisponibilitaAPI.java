@@ -47,36 +47,48 @@ public class DisponibilitaAPI {
 
     // Nel file dove gestisci GET /api/abitazioni/{id}
     public static void getAbitazione(Context ctx) {
-    // 1. Prendi l'ID dall'URL
-    int id = Integer.parseInt(ctx.pathParam("idAbitazione"));
-    
-    // 2. Carica i dati base dell'abitazione
-    Abitazione casa = abitazioneDAO.getAbitazioneById(id);
+        // 1. Prendi l'ID dall'URL
+        int id = Integer.parseInt(ctx.pathParam("idAbitazione"));
 
-    if (casa != null) {
-        // 3. Carica le disponibilità dal DB
-        DisponibilitaDAO dDao = new DisponibilitaDAO();
-        List<Map<String, Object>> disps = dDao.getDisponibilitaAbitazione(id);
+        // 2. Carica i dati base dell'abitazione
+        Abitazione casa = abitazioneDAO.getAbitazioneById(id);
 
-        // 4. COSTRUISCI LA RISPOSTA MANUALE (per essere sicuri che Jackson non salti campi)
-        Map<String, Object> risposta = new HashMap<>();
-        risposta.put("id", casa.getId());
-        risposta.put("nome", casa.getNome());
-        risposta.put("indirizzo", casa.getIndirizzo());
-        risposta.put("n_locali", casa.getN_locali());
-        risposta.put("n_posti_letto", casa.getN_posti_letto());
-        risposta.put("piano", casa.getPiano());
-        risposta.put("id_host", casa.getId_host()); // Questo lo vediamo nel tuo JSON
-        
-        // FONDAMENTALE: Se la lista è vuota, mettiamo un array vuoto invece di null
-        risposta.put("disponibilita", disps != null ? disps : new ArrayList<>());
+        if (casa != null) {
+            // 3. Carica le disponibilità dal DB
+            DisponibilitaDAO dDao = new DisponibilitaDAO();
+            List<Map<String, Object>> disps = dDao.getDisponibilitaAbitazione(id);
 
-        // DEBUG: Stampa in console per vedere se Java le ha trovate
-        System.out.println("Disponibilità trovate per casa " + id + ": " + disps.size());
+            // 4. COSTRUISCI LA RISPOSTA MANUALE (per essere sicuri che Jackson non salti
+            // campi)
+            Map<String, Object> risposta = new HashMap<>();
+            risposta.put("id", casa.getId());
+            risposta.put("nome", casa.getNome());
+            risposta.put("indirizzo", casa.getIndirizzo());
+            risposta.put("n_locali", casa.getN_locali());
+            risposta.put("n_posti_letto", casa.getN_posti_letto());
+            risposta.put("piano", casa.getPiano());
+            risposta.put("id_host", casa.getId_host()); // Questo lo vediamo nel tuo JSON
 
-        ctx.json(risposta);
-    } else {
-        ctx.status(404).result("Abitazione non trovata");
+            // FONDAMENTALE: Se la lista è vuota, mettiamo un array vuoto invece di null
+            risposta.put("disponibilita", disps != null ? disps : new ArrayList<>());
+
+            // DEBUG: Stampa in console per vedere se Java le ha trovate
+            System.out.println("Disponibilità trovate per casa " + id + ": " + disps.size());
+
+            ctx.json(risposta);
+        } else {
+            ctx.status(404).result("Abitazione non trovata");
+        }
     }
-}
+
+    public static void eliminaDisponibilita(Context ctx) {
+        try {
+            int id = Integer.parseInt(ctx.pathParam("id"));
+            disponibilitaDAO.cancellaDisponibilita(id);
+            ctx.status(200).result("Disponibilità eliminata con successo");
+        } catch (Exception e) {
+            ctx.status(400).result("Errore nella cancellazione: " + e.getMessage());
+        }
+    }
+
 }

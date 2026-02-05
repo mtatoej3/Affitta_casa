@@ -81,6 +81,10 @@ public class StatsAPI {
         ctx.json(stastDAO.getTopGuestGiorniMese());
     }
 
-    
+    public static void getMediaPostiLetto(Context ctx) {
+        double media = stastDAO.getMediaPostiLetto();
+        // Restituiamo un oggetto JSON semplice
+        ctx.json(Map.of("media_posti_letto", media));
+    }
 
 }

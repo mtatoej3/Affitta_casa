@@ -21,6 +21,9 @@ function Stats() {
     const [topGuests, setTopGuests] = useState<any[]>([]);
     const [loadingGuests, setLoadingGuests] = useState(false);
 
+    const [mediaPosti, setMediaPosti] = useState<number | null>(null);
+    const [loadingMedia, setLoadingMedia] = useState(false);
+
     const caricaCase = () => {
         statsService.getAbitazioniByHost(codiceInput)
             .then(dati => setCaseHost(dati))
@@ -99,12 +102,26 @@ function Stats() {
             });
     };
 
+    const caricaMediaPosti = () => {
+        setLoadingMedia(true);
+        statsService.getMediaPostiLetto()
+            .then(res => {
+                setMediaPosti(res.media_posti_letto);
+                setLoadingMedia(false);
+            })
+            .catch(err => {
+                console.error(err);
+                setLoadingMedia(false);
+            });
+    };
+
     useEffect(() => {
 
         caricaTopMese();
         caricaTopHosts();
         caricaSuperHosts();
         caricaTopGuests();
+        caricaMediaPosti();
 
 
         if (codiceInput) {
@@ -115,170 +132,255 @@ function Stats() {
     }, []);
 
     return (
-        <div style={{ padding: '20px' }}>
+        <div style={{
+            backgroundColor: '#1a1a1a',
+            minHeight: '100vh',
+            padding: '20px',
+            color: 'white'
+        }}>
+            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
 
-            {/* --- SEZIONE ABITAZIONE PER HOST  --- */}
-            <h2>Cerca Abitazioni per Host</h2>
-            <div style={{ marginBottom: '20px' }}>
-                <input
-                    type="text"
-                    placeholder="Inserisci Codice Host..."
-                    value={codiceInput}
-                    onChange={(e) => setCodiceInput(e.target.value)}
-                />
-                <button onClick={caricaCase}>Cerca</button>
-            </div>
-
-            <table width="100%" border={1} style={{ borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr>
-                        <th>Nome</th>
-                        <th>Indirizzo</th>
-                        <th>Posti Letto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {caseHost.map(ab => (
-                        <tr key={ab.id}>
-                            <td>{ab.nome}</td>
-                            <td>{ab.indirizzo}</td>
-                            <td>{ab.n_posti_letto}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-
-            {/* --- SEZIONE ULTIMA PRENOTAZIONE --- */}
-            <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #444' }}>
-                <h2 style={{ color: 'white' }}>🕒 Ottieni l'ultima prenotazione</h2>
-                <div style={{ marginBottom: '20px' }}>
+                {/* --- SEZIONE ABITAZIONE PER HOST  --- */}
+                <h2 style={{ color: 'white' }}>Cerca Abitazioni per Host</h2>
+                <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
                     <input
-                        type="number"
-                        placeholder="Inserisci ID Utente..."
-                        value={idUtenteBusca}
-                        onChange={(e) => setIdUtenteBusca(e.target.value)}
-                        style={{ padding: '8px', borderRadius: '4px', border: '1px solid #666', marginRight: '10px', backgroundColor: '#333', color: 'white' }}
+                        type="text"
+                        placeholder="Inserisci Codice Host..."
+                        value={codiceInput}
+                        onChange={(e) => setCodiceInput(e.target.value)}
+                        style={{
+                            padding: '10px',
+                            border: '1px solid #555',
+                            borderRadius: '4px',
+                            backgroundColor: '#2d2d2d',
+                            color: 'white',
+                            flex: 1
+                        }}
                     />
-                    <button onClick={cercaUltima} style={{ padding: '8px 16px', cursor: 'pointer' }}>
-                        Trova Prenotazione
-                    </button>
+                    <button onClick={caricaCase} style={{
+                        padding: '10px 20px',
+                        backgroundColor: '#007bff',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                    }}>Cerca</button>
                 </div>
 
-                {loadingP && <p style={{ color: 'white' }}>Caricamento in corso...</p>}
-
-                {ultimaP ? (
-                    <div style={{
-                        padding: '15px',
-                        backgroundColor: '#2d2d2d', // Grigio scuro
-                        color: 'white',             // Scritte bianche
-                        borderRadius: '8px',
-                        border: '2px solid #000000', // Un bordo colorato (come quello nell'immagine) lo rende più moderno
-                        boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
-                    }}>
-                        <p style={{ margin: '8px 0' }}><strong>ID Prenotazione:</strong> {ultimaP.id}</p>
-                        <p style={{ margin: '8px 0' }}><strong>ID Abitazione:</strong> {ultimaP.abitazione?.id || ultimaP.id_abitazione || 'N/D'}</p>
-                        <p style={{ margin: '8px 0' }}><strong>Periodo:</strong> dal {ultimaP.data_inizio} al {ultimaP.data_fine}</p>
-                        <p style={{ margin: '8px 0' }}>
-                            <strong>Stato:</strong>
-                            <span style={{
-                                backgroundColor: '#444',
-                                padding: '2px 8px',
-                                borderRadius: '4px',
-                                marginLeft: '5px',
-
-                            }}>
-                                {ultimaP.stato}
-                            </span>
-                        </p>
-                    </div>
-                ) : (
-                    !loadingP && idUtenteBusca && <p style={{ color: '#bbb' }}>Nessun dato trovato per questo ID.</p>
-                )}
-            </div>
-
-
-            {/* --- SEZIONE TOP ABITAZIONE MESE --- */}
-
-            <div className="stats-box">
-                <h3>🔥 Abitazione Top del Mese</h3>
-                {loadingTop && <p>Calcolando le statistiche...</p>}
-
-                {!loadingTop && topMese && (
-                    <div>
-                        <p><strong>{topMese.nome}</strong></p>
-                        <span>{topMese.conteggio} prenotazioni ricevute</span>
-                    </div>
-                )}
-
-                {!loadingTop && !topMese && (
-                    <p style={{ color: '#888' }}>Nessun dato per l'ultimo mese.</p>
-                )}
-            </div>
-
-            {/* --- SEZIONE TOP HOSTS MESE --- */}
-
-            <div className="stats-box">
-                <h3>Classifica Host del Mese</h3>
-                {loadingHosts ? <p>Caricamento...</p> : (
-                    <ul style={{ listStyle: 'none', padding: 0 }}>
-                        {topHosts.map((h, index) => (
-                            <li key={index} style={{ marginBottom: '8px' }}>
-                                <strong>{index + 1}. {h.nome}</strong>: {h.conteggio} prenotazioni
-                            </li>
-                        ))}
-                        {topHosts.length === 0 && <li>Nessun host attivo questo mese</li>}
-                    </ul>
-                )}
-            </div>
-
-            {/* --- SEZIONE SUPER HOSTS  --- */}
-
-            <div className="stats-box">
-                <h3>Super-host</h3>
-                {loadingSH ? <p>Caricamento...</p> : (
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-                        {superHosts.map((sh, index) => (
-                            <div key={index} style={{
-                                padding: '10px',
-                                border: '1px solid #ffd700',
-                                borderRadius: '8px',
-                                backgroundColor: '#fffdf0'
-                            }}>
-                                <strong>{sh.nome}</strong><br />
-                                <small>{sh.email}</small>
-                            </div>
-                        ))}
-                        {superHosts.length === 0 && <p>Nessun super-host trovato.</p>}
-                    </div>
-                )}
-            </div>
-
-
-            {/* --- SEZIONE TOP 5 GUEST  --- */}
-
-            <div className="stats-box">
-                <h3>Top Viaggiatori (Giorni totali/mese)</h3>
-                {loadingGuests ? <p>Caricamento...</p> : (
-                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                        <thead>
-                            <tr style={{ borderBottom: '1px solid #ccc' }}>
-                                <th align="left">Nome</th>
-                                <th align="right">Giorni</th>
+                <table width="100%" style={{
+                    borderCollapse: 'collapse',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    marginBottom: '40px'
+                }}>
+                    <thead>
+                        <tr style={{ backgroundColor: '#007bff', color: 'white' }}>
+                            <th style={{ padding: '12px', border: '1px solid #444' }}>Nome</th>
+                            <th style={{ padding: '12px', border: '1px solid #444' }}>Indirizzo</th>
+                            <th style={{ padding: '12px', border: '1px solid #444' }}>Posti Letto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {caseHost.map(ab => (
+                            <tr key={ab.id} style={{ borderBottom: '1px solid #444' }}>
+                                <td style={{ padding: '12px', border: '1px solid #444', color: 'white' }}>{ab.nome}</td>
+                                <td style={{ padding: '12px', border: '1px solid #444', color: 'white' }}>{ab.indirizzo}</td>
+                                <td style={{ padding: '12px', border: '1px solid #444', color: 'white' }}>{ab.n_posti_letto}</td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {topGuests.map((g, i) => (
-                                <tr key={i}>
-                                    <td>{g.nome}</td>
-                                    <td align="right">{g.giorni} gg</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                )}
-                {topGuests.length === 0 && !loadingGuests && <p>Nessun dato disponibile.</p>}
-            </div>
+                        ))}
+                    </tbody>
+                </table>
 
+                {/* --- SEZIONE ULTIMA PRENOTAZIONE --- */}
+                <div style={{ marginTop: '40px', paddingTop: '20px', borderTop: '2px solid #444' }}>
+                    <h2 style={{ color: 'white' }}>🕒 Ottieni l'ultima prenotazione</h2>
+                    <div style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
+                        <input
+                            type="number"
+                            placeholder="Inserisci ID Utente..."
+                            value={idUtenteBusca}
+                            onChange={(e) => setIdUtenteBusca(e.target.value)}
+                            style={{
+                                padding: '10px',
+                                borderRadius: '4px',
+                                border: '1px solid #555',
+                                backgroundColor: '#2d2d2d',
+                                color: 'white',
+                                flex: 1
+                            }}
+                        />
+                        <button onClick={cercaUltima} style={{
+                            padding: '10px 20px',
+                            cursor: 'pointer',
+                            backgroundColor: '#28a745',
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '4px',
+                            fontWeight: 'bold'
+                        }}>
+                            Trova Prenotazione
+                        </button>
+                    </div>
+
+                    {loadingP && <p style={{ color: 'white' }}>Caricamento in corso...</p>}
+
+                    {ultimaP ? (
+                        <div style={{
+                            padding: '15px',
+                            backgroundColor: '#2d2d2d',
+                            color: 'white',
+                            borderRadius: '8px',
+                            border: '2px solid #007bff',
+                            boxShadow: '0 4px 10px rgba(0,0,0,0.3)'
+                        }}>
+                            <p style={{ margin: '8px 0' }}><strong>ID Prenotazione:</strong> {ultimaP.id}</p>
+                            <p style={{ margin: '8px 0' }}><strong>ID Abitazione:</strong> {ultimaP.abitazione?.id || ultimaP.id_abitazione || 'N/D'}</p>
+                            <p style={{ margin: '8px 0' }}><strong>Periodo:</strong> dal {ultimaP.data_inizio} al {ultimaP.data_fine}</p>
+                            <p style={{ margin: '8px 0' }}>
+                                <strong>Stato:</strong>
+                                <span style={{
+                                    backgroundColor: '#444',
+                                    padding: '2px 8px',
+                                    borderRadius: '4px',
+                                    marginLeft: '5px',
+
+                                }}>
+                                    {ultimaP.stato}
+                                </span>
+                            </p>
+                        </div>
+                    ) : (
+                        !loadingP && idUtenteBusca && <p style={{ color: '#bbb' }}>Nessun dato trovato per questo ID.</p>
+                    )}
+                </div>
+
+
+                {/* --- SEZIONE TOP ABITAZIONE MESE --- */}
+
+                <div style={{
+                    marginTop: '40px',
+                    padding: '20px',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    border: '1px solid #444'
+                }}>
+                    <h3 style={{ color: 'white' }}>🔥 Abitazione Top del Mese</h3>
+                    {loadingTop && <p style={{ color: 'white' }}>Calcolando le statistiche...</p>}
+
+                    {!loadingTop && topMese && (
+                        <div>
+                            <p style={{ color: 'white' }}><strong>{topMese.nome}</strong></p>
+                            <span style={{ color: '#bbb' }}>{topMese.conteggio} prenotazioni ricevute</span>
+                        </div>
+                    )}
+
+                    {!loadingTop && !topMese && (
+                        <p style={{ color: '#888' }}>Nessun dato per l'ultimo mese.</p>
+                    )}
+                </div>
+
+                {/* --- SEZIONE TOP HOSTS MESE --- */}
+
+                <div style={{
+                    marginTop: '40px',
+                    padding: '20px',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    border: '1px solid #444'
+                }}>
+                    <h3 style={{ color: 'white' }}>Classifica Host del Mese</h3>
+                    {loadingHosts ? <p style={{ color: 'white' }}>Caricamento...</p> : (
+                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                            {topHosts.map((h, index) => (
+                                <li key={index} style={{ marginBottom: '8px', color: 'white' }}>
+                                    <strong>{index + 1}. {h.nome}</strong>: {h.conteggio} prenotazioni
+                                </li>
+                            ))}
+                            {topHosts.length === 0 && <li style={{ color: '#bbb' }}>Nessun host attivo questo mese</li>}
+                        </ul>
+                    )}
+                </div>
+
+                {/* --- SEZIONE SUPER HOSTS  --- */}
+
+                <div style={{
+                    marginTop: '40px',
+                    padding: '20px',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    border: '1px solid #444'
+                }}>
+                    <h3 style={{ color: 'white' }}>Super-host</h3>
+                    {loadingSH ? <p style={{ color: 'white' }}>Caricamento...</p> : (
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                            {superHosts.map((sh, index) => (
+                                <div key={index} style={{
+                                    padding: '10px',
+                                    border: '1px solid #ffd700',
+                                    borderRadius: '8px',
+                                    backgroundColor: '#3d3d1f'
+                                }}>
+                                    <strong style={{ color: 'white' }}>{sh.nome}</strong><br />
+                                    <small style={{ color: '#bbb' }}>{sh.email}</small>
+                                </div>
+                            ))}
+                            {superHosts.length === 0 && <p style={{ color: '#bbb' }}>Nessun super-host trovato.</p>}
+                        </div>
+                    )}
+                </div>
+
+
+                {/* --- SEZIONE TOP 5 GUEST  --- */}
+
+                <div style={{
+                    marginTop: '40px',
+                    padding: '20px',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    border: '1px solid #444'
+                }}>
+                    <h3 style={{ color: 'white' }}>Top Viaggiatori (Giorni totali/mese)</h3>
+                    {loadingGuests ? <p style={{ color: 'white' }}>Caricamento...</p> : (
+                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                            <thead>
+                                <tr style={{ borderBottom: '1px solid #555' }}>
+                                    <th align="left" style={{ color: 'white', padding: '10px' }}>Nome</th>
+                                    <th align="right" style={{ color: 'white', padding: '10px' }}>Giorni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {topGuests.map((g, i) => (
+                                    <tr key={i} style={{ borderBottom: '1px solid #444' }}>
+                                        <td style={{ color: 'white', padding: '10px' }}>{g.nome}</td>
+                                        <td align="right" style={{ color: 'white', padding: '10px' }}>{g.giorni} gg</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
+                    {topGuests.length === 0 && !loadingGuests && <p style={{ color: '#bbb' }}>Nessun dato disponibile.</p>}
+                </div>
+
+                {/* --- SEZIONE MEDIA POSTI LETTO --- */}
+                <div style={{
+                    marginTop: '40px',
+                    padding: '20px',
+                    backgroundColor: '#2d2d2d',
+                    borderRadius: '8px',
+                    border: '1px solid #444'
+                }}>
+                    <h3 style={{ color: 'white' }}>🛏️ Media Posti Letto</h3>
+                    {loadingMedia ? <p style={{ color: 'white' }}>Calcolo in corso...</p> : (
+                        <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#007bff' }}>
+                            {mediaPosti !== null ? mediaPosti.toFixed(1) : 'N/D'}
+                            <span style={{ fontSize: '16px', color: '#666', fontWeight: 'normal' }}> posti per casa</span>
+                        </div>
+                    )}
+                </div>
+
+            </div>
         </div>
     );
 }

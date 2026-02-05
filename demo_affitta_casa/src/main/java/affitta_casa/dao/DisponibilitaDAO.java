@@ -106,4 +106,17 @@ public class DisponibilitaDAO {
         return lista;
     }
 
+    public void cancellaDisponibilita(int id) {
+    String sql = "DELETE FROM Disponibilita WHERE id = ?";
+    try (Connection conn = dbManager.getConnection();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, id);
+        pstmt.executeUpdate();
+        System.out.println("Disponibilità con ID " + id + " eliminata.");
+    } catch (SQLException e) {
+        System.err.println("Errore cancellazione disponibilità: " + e.getMessage());
+    }
+}
+
+
 }

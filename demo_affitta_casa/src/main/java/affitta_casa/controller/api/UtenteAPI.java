@@ -1,6 +1,9 @@
 package affitta_casa.controller.api;
 
 import io.javalin.http.Context;
+
+import java.util.List;
+
 import affitta_casa.dao.UtenteDAO;
 import affitta_casa.models.Utente;
 
@@ -36,4 +39,33 @@ public class UtenteAPI {
             ctx.status(404).result("Utente non trovato");
         }
     }
+
+    /**
+     * GET /api/utenti - Restituisce tutti gli utenti
+     */
+    public static void getAll(Context ctx) {
+        List<Utente> utenti = utenteDAO.leggiTutti();
+        ctx.json(utenti);
+    }
+
+    /**
+     * PUT /api/utenti/{id} - Modifica un utente
+     */
+    public static void modifica(Context ctx) {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        Utente utenteAggiornato = ctx.bodyAsClass(Utente.class);
+
+        utenteDAO.modificaUtente(utenteAggiornato, id);
+        ctx.status(200).result("Utente aggiornato con successo");
+    }
+
+    /**
+     * DELETE /api/utenti/{id} - Elimina un utente
+     */
+    public static void cancella(Context ctx) {
+        int id = Integer.parseInt(ctx.pathParam("id"));
+        utenteDAO.cancellaUtente(id);
+        ctx.status(204); // No Content
+    }
+
 }

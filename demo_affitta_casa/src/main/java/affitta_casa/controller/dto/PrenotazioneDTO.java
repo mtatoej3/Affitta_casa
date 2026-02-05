@@ -2,11 +2,11 @@ package affitta_casa.controller.dto;
 
 import java.time.LocalDate;
 
-import affitta_casa.models.Abitazione;
+
 
 public class PrenotazioneDTO {
     // Dati per la prenotazione
-    public Abitazione id_abitazione;
+    public int id_abitazione;
     public LocalDate data_inizio;
     public LocalDate data_fine;
 
