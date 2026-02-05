@@ -4,7 +4,7 @@ Benvenuti nella documentazione ufficiale di **Turista Facoltoso**, un ecosistema
 
 ---
 
-## 📖 1. Scenario e Visione di Business
+## 1. Scenario e Visione di Business
 
 Il progetto nasce per soddisfare le esigenze di un **Operatore di Backoffice**. A differenza delle classiche app consumer, qui il focus non è sull'utente finale (turista), ma sull'amministratore che deve orchestrare i dati provenienti da molteplici fonti.
 
@@ -18,7 +18,7 @@ Immaginiamo una suite gestionale dove un operatore può:
 
 ---
 
-## 🗄️ 2. Deep Dive: Il Database (PostgreSQL)
+## 2. Deep Dive: Il Database (PostgreSQL)
 
 La persistenza è affidata a **PostgreSQL**, scelto per la sua robustezza e il supporto nativo a tipi complessi (ENUM) e integrità referenziale avanzata.
 
@@ -52,7 +52,7 @@ Feedback post-soggiorno.
 
 ---
 
-## ⚙️ 3. Architettura Backend: Il Motore Java
+## 3. Architettura Backend: Il Motore Java
 
 Il backend è stato costruito evitando i "magic framework" (come Spring Boot) per favorire la **comprensione totale del codice** e le **performance brute**.
 
@@ -94,7 +94,7 @@ Mentre il `ControllerManager` definisce *dove* andare, le classi nella cartella 
 
 ---
 
-## 🎨 4. Frontend: L'Esperienza React TypeScript
+## 4. Frontend: L'Esperienza React TypeScript
 
 L'interfaccia utente è una SPA (Single Page Application) che punta su rapidità e tipizzazione forte.
 
@@ -103,7 +103,7 @@ L'interfaccia utente è una SPA (Single Page Application) che punta su rapidità
 - **Services**: Classi TypeScript (es. `abitazioneService.ts`) che incapsulano `fetch()`. Gestiscono l'URL base e la trasformazione dei dati in ingresso/uscita.
 - **Types**: Definizione di interfacce (es. `interface Abitazione`) che garantiscono che ogni componente sappia esattamente che dati sta ricevendo.
 
-### 🚠 4.1 Layer dei Servizi (Frontend Services)
+### 4.1 Layer dei Servizi (Frontend Services)
 Il cuore logico della comunicazione nel frontend risiede nella cartella `src/services/`. Questo strato è stato progettato per agire come un **ponte asincrono** tra l'interfaccia utente (React) e il sistema di API (Java).
 
 #### Filosofia di Design: Encapsulation & Mapping
@@ -150,15 +150,15 @@ Abbiamo adottato una filosofia di design "OLED-friendly" e professionale:
 
 ---
 
-## ⚖️ 5. Analisi Critica: Pro e Contro
+##  5. Analisi Critica: Pro e Contro
 
-### ✅ Perché questa soluzione funziona (PRO)
+###  Perché questa soluzione funziona (PRO)
 1. **Velocità di Esecuzione**: Il tempo di risposta del backend è misurabile in millisecondi. Senza Hibernate, non c'è overhead di generazione query.
 2. **Predictability**: Sai esattamente cosa sta succedendo. Non ci sono "annotation magiche" che decidono il comportamento del sistema.
 3. **Controllo SQL Avanzato**: Query come quelle per i "Top 5 Guest" con calcolo differenziale dei giorni sono impossibili o inefficienti in molti ORM; qui sono native e veloci.
 4. **Sicurezza**: L'uso di `PreparedStatement` ovunque elimina il rischio di SQL Injection, parametrizzando ogni input dell'operatore.
 
-### ❌ Limiti e Sfide (CONTRO)
+###  Limiti e Sfide (CONTRO)
 1. **Verbosità del Codice**: Sviluppare un nuovo DAO richiede centinaia di righe di codice JDBC "ripetitivo" (mappatura manuale dei ResultSet).
 2. **Manutenzione del DB**: Se aggiungi una colonna alla tabella, devi aggiornare il Model, il DAO (Insert, Update, Select) e il Frontend. In Spring/Hibernate molte di queste cose sono automatiche.
 3. **Gestione del Pool**: Attualmente si basa su `dbManager`. In produzione su larga scala, servirebbe un driver di pooling come HikariCP per gestire centinaia di connessioni simultanee.
@@ -187,7 +187,7 @@ AND NOT EXISTS (
 
 ---
 
-## 🛠️ Tech Stack Recap
+##  Tech Stack Recap
 
 | Tool | Versione/Tipo |
 |-------|---------------|
@@ -208,25 +208,25 @@ AND NOT EXISTS (
 6. **Fase 6**: **Uniformazione Estetica Premium Dark** (Final Release).
 
 ---
-© 2026 - **Turista Facoltoso Project** | Sviluppato con dedizione per la perfezione tecnica.
+.
 
 ---
 
-## 🏛️ 6. Analisi Architetturale Avanzata
+##  6. Analisi Architetturale Avanzata
 
 In questa sezione approfondiamo aspetti tecnici specifici e scelte di design di alto livello che rendono l'applicazione scalabile e sicura.
 
-### 🧩 Data Transfer Objects (DTO)
+###  Data Transfer Objects (DTO)
 Per evitare di esporre l'intera struttura delle tabelle del database al frontend (ovvero il "Leakage" del dominio), abbiamo implementato un layer di **DTO**.
 - **`RicercaAbitazioneDTO`**: Quando l'utente cerca una casa, non riceve solo l'oggetto `Abitazione`. Il DTO combina dinamicamente i dati della proprietà con quelli della **Disponibilità** (date e prezzo specifico). Questo permette di inviare al frontend un oggetto "piatto" e facile da visualizzare in tabella, nascondendo la complessità dei JOIN sottostanti.
 - **Decoupling**: Se cambiamo il nome di una colonna nel DB, cambiamo la mappatura nel DAO, ma il DTO resta identico, garantendo che il Frontend non si rompa mai.
 
-### 🛡️ Layer dei Servizi (Business Logic)
+###  Layer dei Servizi (Business Logic)
 Oltre ai DAO (che gestiscono solo il DB) e ai Controller (che gestiscono solo HTTP), abbiamo introdotto una logica di **Service** (es. `UtenteService`).
 - **Ruolo**: Qui risiede la "testa" dell'applicazione. Se un domani dovessimo implementare un calcolo complesso per le commissioni o inviare una mail automatica alla creazione di un utente, il posto giusto sarebbe il Service. 
 - **Esempio**: La logica di test completo e validazione incrociata tra Host e Super-host viene orchestrata qui prima di invocare il salvataggio definitivo sul DAO.
 
-### 🔄 Ciclo di Vita di una Prenotazione (State Machine)
+###  Ciclo di Vita di una Prenotazione (State Machine)
 Una prenotazione non è un dato statico, ma un processo. Il sistema ne gestisce gli stati tramite una macchina a stati finiti:
 1. **`in_attesa`**: Il guest ha richiesto la casa. L'host vede la richiesta nella sua dashboard.
 2. **`confermata`**: L'host accetta. Il sistema ora "blocca" quelle date per chiunque altro (Trigger della logica `NOT EXISTS` nella ricerca).
@@ -234,7 +234,7 @@ Una prenotazione non è un dato statico, ma un processo. Il sistema ne gestisce 
 
 ---
 
-## 🛰️ 7. API Endpoints: Mapping Completo
+##  7. API Endpoints: Mapping Completo
 
 Per gli sviluppatori che volessero integrare sistemi esterni, ecco il mapping granulare delle API (Porta 7000):
 
@@ -250,7 +250,7 @@ Per gli sviluppatori che volessero integrare sistemi esterni, ecco il mapping gr
 
 ---
 
-## 🚦 8. Robustezza: Gestione Errori e Logging
+## 8. Robustezza: Gestione Errori e Logging
 
 ### Logging Operativo
 L'applicazione utilizza un sistema di **logging lato server** per facilitare il debugging del backoffice:
@@ -263,7 +263,7 @@ L'applicazione utilizza un sistema di **logging lato server** per facilitare il 
 
 ---
 
-## 🗺️ 9. Navigazione Frontend (React Router)
+##  9. Navigazione Frontend (React Router)
 
 Il frontend utilizza `react-router-dom` per gestire una navigazione fluida senza ricaricare la pagina:
 - **Route Dinamiche**: `/abitazione/:id`. Utilizzando l'hook `useParams`, la pagina `Dettaglio.tsx` recupera l'ID dall'URL e interroga il backend per caricare istantaneamente foto e dati della casa specifica.
@@ -271,7 +271,7 @@ Il frontend utilizza `react-router-dom` per gestire una navigazione fluida senza
 
 ---
 
-## 🚀 10. Evoluzioni Future (Scalability)
+## 10. Evoluzioni Future (Scalability)
 
 Il progetto è predisposto per le seguenti estensioni:
 1. **Authentication**: Integrazione di JWT (JSON Web Tokens) per proteggere le rotte Host.
@@ -280,3 +280,4 @@ Il progetto è predisposto per le seguenti estensioni:
 4. **Pool di Connessioni**: Implementazione di HikariCP per gestire un carico di migliaia di operatori simultanei.
 
 ---
+© 2026 - **Turista Facoltoso Project** | Matteo Iacovella 
